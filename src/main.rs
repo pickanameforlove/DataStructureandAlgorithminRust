@@ -1,3 +1,5 @@
+mod graph;
+use graph::*;
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     
@@ -7,6 +9,10 @@ fn main() {
     for i in list{
         println!("{}",i);
     }
+    let mut edgelist = vec![Edge::new(1, 2, 7),Edge::new(1, 4, 5),Edge::new(4, 2, 9),Edge::new(3, 2, 8),Edge::new(5, 2, 7),
+    Edge::new(3, 5, 5),Edge::new(4, 5, 15),Edge::new(4, 6, 6),Edge::new(5, 6, 8),Edge::new(5, 7, 9),Edge::new(6, 7, 11)];
+
+    kruskal(&mut edgelist, 7);
 }
 
 /// this is bubble sort
@@ -89,6 +95,7 @@ fn quick_sort(l:&mut [u32]){
             if l[high] <= anchor {
                 direction = false;
                 //交换完之后不能改变指针。
+                //要始终保证low/high指针指向anchor值。
                 let mut temp = l[high];
                 l[high] = l[low];
                 l[low] = temp;
