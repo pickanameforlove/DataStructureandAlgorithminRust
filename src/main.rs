@@ -1,5 +1,7 @@
 mod graph;
+mod LinkedList;
 use graph::*;
+use LinkedList::*;
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     
@@ -13,6 +15,12 @@ fn main() {
     Edge::new(3, 5, 5),Edge::new(4, 5, 15),Edge::new(4, 6, 6),Edge::new(5, 6, 8),Edge::new(5, 7, 9),Edge::new(6, 7, 11)];
 
     kruskal(&mut edgelist, 7);
+    let mut linkedlist = LinkedList::LinkedList::new();
+    linkedlist.push(1);
+    linkedlist.push(2);
+    linkedlist.display();
+    linkedlist.push(3);
+    linkedlist.display();
 }
 
 /// this is bubble sort

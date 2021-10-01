@@ -33,7 +33,7 @@ impl Ord for Edge{
 }
 
 pub fn kruskal(l:&mut Vec<Edge>,n : u32){
-    l.sort();
+    l.sort_by(|a,b| {a.weight.cmp(&b.weight)});
     let mut index = 0;
     let mut father:Vec<u32> = vec![0;(n+1) as usize];
     let mut totalWeight = 0;
