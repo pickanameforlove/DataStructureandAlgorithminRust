@@ -1,9 +1,10 @@
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     
-    let length = list.len() - 1;
-    let mut list2 = merge_sort(&mut list,0,length);
-    for i in list2{
+    // let length = list.len() - 1;
+    // let mut list2 = merge_sort(&mut list,0,length);
+    quick_sort(&mut list);
+    for i in list{
         println!("{}",i);
     }
 }
@@ -34,12 +35,13 @@ fn merge_sort(l:&[u32],left: usize,right:usize)->Vec<u32>{
     if left == right{
         return vec![l[left]];
     }
+    //分
     let mid = (left +right ) / 2;
     let result = union(&merge_sort(l,left,mid),&merge_sort(l,mid+1,right));
     return result;
 
 }
-
+//合
 fn union(l:&[u32],r:&[u32])-> Vec<u32>{
     let l1 = l.len();
     let l2 = r.len();
@@ -70,4 +72,43 @@ fn union(l:&[u32],r:&[u32])-> Vec<u32>{
         k += 1;
     }
     return result;
+}
+
+fn quick_sort(l:&mut [u32]){
+    let length = l.len();
+    if length <= 1{
+        return;
+    }
+    let anchor = l[0];
+    let mut low = 0;
+    let mut high = l.len()-1;
+    let mut direction = true;
+    
+    while low < high {
+        if direction {
+            if l[high] <= anchor {
+                direction = false;
+                //交换完之后不能改变指针。
+                let mut temp = l[high];
+                l[high] = l[low];
+                l[low] = temp;
+            }else{
+                high -= 1;
+            }
+           
+        }else{
+            if l[low] > anchor{
+                direction = true;
+                let mut temp = l[high];
+                l[high] = l[low];
+                l[low] = temp;
+            }else{
+                low += 1;
+            }
+            
+        }
+    }
+    
+    quick_sort(&mut ((*l)[0..=high]));
+    quick_sort(&mut ((*l)[high+1..length]));
 }
