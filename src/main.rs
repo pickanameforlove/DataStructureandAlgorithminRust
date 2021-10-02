@@ -22,6 +22,9 @@ fn main() {
     linkedlist.push(3);
     linkedlist.insert(4, 0);
     linkedlist.display();
+    let v = linkedlist.pop();
+    println!("value is {}",v);
+    linkedlist.display();
 }
 
 /// this is bubble sort

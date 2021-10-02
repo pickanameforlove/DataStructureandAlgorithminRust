@@ -59,6 +59,9 @@ impl LinkedList{
     }
     ///order为0时，代表head与第一个节点之间插入
     pub fn insert(&mut self, value : i32,order:i32){
+        if order < 0 {
+            println!("the input order is illegal");
+        }
         let mut iter_node = &mut self.head;
         let mut index = 0;
         while index < order{
@@ -76,10 +79,37 @@ impl LinkedList{
             let mut node = Node::new(value);
             node.next = iter_node_son;
             *iter_node = Some(Box::new(node));
+            self.length += 1
         }else{
             println!("the input order is illegal");
         }
 
+    }
+    pub fn pop(&mut self)->i32{
+        let mut iter_node =  &mut self.head;
+        let mut index = 0;
+        //版本一，失败
+        // while let Some(p) = iter_node{
+        //     if index == self.length - 1{
+        //         index += 1;
+        //         iter_node = &mut p.next;
+        //     }
+        // }
+        // let res = iter_node.clone();
+        //版本二
+        while  index < self.length-1 {
+            match iter_node {
+                Some(p) => {
+                    iter_node = & mut p.next;
+                    index += 1},
+                None => break,
+            };
+        }
+        let res = (*iter_node).clone();
+
+        *iter_node  = None;
+        self.length -= 1;
+        res.unwrap().value
     }
     
 }
