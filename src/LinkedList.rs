@@ -1,8 +1,10 @@
-use std::rc::Rc;
+use std::{borrow::BorrowMut, iter, rc::Rc};
+#[derive(Clone)]
 struct Node{
     value : i32,
     next : Option<Box<Node>>
 }
+
 impl Node{
     fn new(v : i32)->Self{
         Self{
@@ -45,6 +47,38 @@ impl LinkedList{
         //问题就是一个引用能不能继续被借用值。
         *iter_node = Some(Box::new(Node::new(value)));
         self.length += 1;
+        //版本二
+        // while let Some(p) = iter_node{
+        //     if p.next.is_none(){
+        //         break;
+        //     }
+        //     iter_node = &mut p.next;
+        // }
+        // iter_node.unwrap().setNext(value);
+
+    }
+    ///order为0时，代表head与第一个节点之间插入
+    pub fn insert(&mut self, value : i32,order:i32){
+        let mut iter_node = &mut self.head;
+        let mut index = 0;
+        while index < order{
+            match iter_node{
+                Some(p) => {
+                    iter_node = & mut p.next;
+                    index += 1},
+                None => break,
+            }
+            
+        }
+        println!("{},{}",index,order);
+        if index == order{
+            let iter_node_son = (*iter_node).clone();
+            let mut node = Node::new(value);
+            node.next = iter_node_son;
+            *iter_node = Some(Box::new(node));
+        }else{
+            println!("the input order is illegal");
+        }
 
     }
     

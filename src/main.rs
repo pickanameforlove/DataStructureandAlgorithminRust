@@ -20,6 +20,7 @@ fn main() {
     linkedlist.push(2);
     linkedlist.display();
     linkedlist.push(3);
+    linkedlist.insert(4, 0);
     linkedlist.display();
 }
 
