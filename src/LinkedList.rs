@@ -105,11 +105,40 @@ impl LinkedList{
                 None => break,
             };
         }
+        //此处会发生iter_node的借用。
         let res = (*iter_node).clone();
 
         *iter_node  = None;
         self.length -= 1;
         res.unwrap().value
+    }
+    
+    pub fn delete(&mut self, value : i32){
+        let mut iter_node =  &mut self.head;
+        let mut res = None;
+        let mut flag = false;
+
+        loop {
+            match iter_node {
+                Some(p) => {
+                    if p.value == value {
+                        res = p.next.clone();
+                        flag = true;
+                        break;
+                    }
+                    iter_node = &mut iter_node.as_mut().unwrap().next;
+                    // iter_node = &mut (iter_node.unwrap().next);
+                    },
+                None => break,
+            };
+        }
+        
+        if flag{
+            *iter_node = res;
+            self.length -= 1;
+        }else{
+            println!("there is not the value to be deleted!");
+        }
     }
     
 }
