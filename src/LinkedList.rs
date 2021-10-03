@@ -1,4 +1,4 @@
-use std::{borrow::BorrowMut, iter, rc::Rc};
+
 #[derive(Clone)]
 struct Node{
     value : i32,
@@ -140,5 +140,24 @@ impl LinkedList{
             println!("there is not the value to be deleted!");
         }
     }
-    
+ 
+    ///position代表更新的节点的位置，当position为0时代表第一个节点。
+    pub fn update(&mut self, position: i32, value : i32){
+        let mut iter_node = &mut self.head;
+        if position > self.length - 1 || position < 0{
+            println!("the position is illegal!");
+        }
+        let mut index = 0;
+        while index < position{
+            match iter_node {
+                Some(p) => {
+                    iter_node = &mut p.next;
+                    index += 1;
+                },
+                None => break,
+            };
+        }
+        iter_node.as_mut().unwrap().value = value;
+
+    }
 }

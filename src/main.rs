@@ -4,7 +4,6 @@ use graph::*;
 use LinkedList::*;
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
-    
     // let length = list.len() - 1;
     // let mut list2 = merge_sort(&mut list,0,length);
     quick_sort(&mut list);
@@ -25,6 +24,8 @@ fn main() {
     // let v = linkedlist.pop();
     // println!("value is {}",v);
     linkedlist.delete(4);
+    linkedlist.display();
+    linkedlist.update(0, 5);
     linkedlist.display();
 }
 
