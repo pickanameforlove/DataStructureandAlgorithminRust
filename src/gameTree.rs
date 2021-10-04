@@ -4,10 +4,7 @@
 ///因此输入的board上面的棋子数必为奇数，因为如果为偶数的话，则是对手应了一手的情况，这涉及到对手会不会选择的问题。
 ///board数组上只会出现3个值，0，-1，1，0代表空位置，1代表我方下的位置，-1代表对手下的位置。
 pub fn getGameTree(board: & mut [[i32;3];3],flag:bool)->i32{
-    let mid_value = getresult(board);
-    if mid_value != 0{
-        return mid_value;
-    }
+    
     let mut index_x = 0;
     let mut index_y = 0;
     let mut vecx = Vec::new();
@@ -24,10 +21,16 @@ pub fn getGameTree(board: & mut [[i32;3];3],flag:bool)->i32{
         index_x += 1;
     }
     let length = vecx.len();
+    let mid_value = getresult(board);
+    if mid_value != 0{
+        return mid_value;
+    }else if  length == 0{
+        return mid_value;
+    }
     let mut index = 0;
     if flag{
         let mut max = -10;
-        let mut temp_index = 0;
+        // let mut temp_index = 0;
         while index < length{
             let x = *vecx.get(index).unwrap();
             let y = *vecy.get(index).unwrap();
@@ -38,7 +41,7 @@ pub fn getGameTree(board: & mut [[i32;3];3],flag:bool)->i32{
             let temp_res = getGameTree(board, !flag);
             if max < temp_res{
                 max  = temp_res;
-                temp_index = index;
+                // temp_index = index;
             }
             board[x][y] = 0;
             index += 1;

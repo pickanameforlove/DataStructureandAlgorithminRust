@@ -1,11 +1,14 @@
 mod graph;
 mod LinkedList;
 mod gameTree;
-use core::borrow;
+mod tree;
 
 use graph::*;
 use LinkedList::*;
 use gameTree::getGameTree;
+use std::rc::Rc;
+
+use crate::tree::Tree;
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     // let length = list.len() - 1;
@@ -37,6 +40,41 @@ fn main() {
     println!("{}\t{}\t{}",board[2][0],board[2][1],board[2][2]);
     let res = getGameTree(&mut board, false);
     println!("the result is {}",res);
+    let node1 = Rc::new(Tree{
+        value : 1,
+        left : None,
+        right : None
+    });
+    let node2 = Rc::new(Tree{
+        value : 2,
+        left : None,
+        right : None
+    });
+    let node3 = Rc::new(Tree{
+        value : 3,
+        left : Some(Rc::clone(&node1)),
+        right : Some(Rc::clone(&node2))
+    });
+    let node4 = Rc::new(Tree{
+        value : 4,
+        left : None,
+        right : None
+    });
+    let node5 = Rc::new(Tree{
+        value : 5,
+        left : Some(Rc::clone(&node4)),
+        right : None
+    });
+    let node6 = Rc::new(Tree{
+        value : 6,
+        left : Some(Rc::clone(&node3)),
+        right : Some(Rc::clone(&node5))
+    });
+    node6.midtravel();
+    println!("");
+    node6.pretravel();
+    println!("");
+    node6.lasttravel();
 }
 
 /// this is bubble sort
