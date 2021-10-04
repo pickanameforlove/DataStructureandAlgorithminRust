@@ -58,3 +58,16 @@ fn get_father(father : &[u32],n:u32) -> u32{
     }
     return node;
 }
+
+// pub fn dijkstra(l:&Vec<Edge>, n :usize){
+//     let mut pathlength = vec![999;n+1];
+//     //原点是1
+//     let mut mid = 1;
+//     pathlength[mid] = 0;
+//     let mut index = 0;
+//     let number = l.len();
+//     while index < number{
+//         let edge = l.get(index);
+        
+//     }
+// }

@@ -1,7 +1,11 @@
 mod graph;
 mod LinkedList;
+mod gameTree;
+use core::borrow;
+
 use graph::*;
 use LinkedList::*;
+use gameTree::getGameTree;
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     // let length = list.len() - 1;
@@ -27,6 +31,12 @@ fn main() {
     linkedlist.display();
     linkedlist.update(0, 5);
     linkedlist.display();
+    let mut board = [[1,0,0],[0,1,0],[0,0,-1]];
+    println!("{}\t{}\t{}",board[0][0],board[0][1],board[0][2]);
+    println!("{}\t{}\t{}",board[1][0],board[1][1],board[1][2]);
+    println!("{}\t{}\t{}",board[2][0],board[2][1],board[2][2]);
+    let res = getGameTree(&mut board, false);
+    println!("the result is {}",res);
 }
 
 /// this is bubble sort
