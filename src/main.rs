@@ -2,13 +2,15 @@ mod graph;
 mod LinkedList;
 mod gameTree;
 mod tree;
+mod sokoban;
 
 use graph::*;
 use LinkedList::*;
 use gameTree::getGameTree;
 use std::rc::Rc;
+use sokoban::Position;
 
-use crate::tree::Tree;
+use crate::{sokoban::sokoban_solve, tree::Tree};
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     // let length = list.len() - 1;
@@ -75,6 +77,49 @@ fn main() {
     node6.pretravel();
     println!("");
     node6.lasttravel();
+    println!("");
+    let mut board_2 = vec![
+        vec![-1,-1,-1,-1,-1,-1,-1,-1],
+        vec![-1,-1,-1,0,0,0,-1,-1],
+        vec![-1,2,3,1,0,0,-1,-1],
+        vec![-1,-1,-1,0,1,2,-1,-1],
+        vec![-1,2,-1,-1,1,0,-1,-1],
+        vec![-1,0,-1,0,2,0,-1,-1],
+        vec![-1,1,0,4,1,1,2,-1],
+        vec![-1,0,0,0,2,0,0,-1],
+        vec![-1,-1,-1,-1,-1,-1,-1,-1]];
+
+    // let mut posList = Vec::new();
+    // posList.push(Position::new(2,2));
+    // posList.push(Position::new(2,3));
+    // posList.push(Position::new(3,4));
+    // posList.push(Position::new(4,4));
+    // posList.push(Position::new(6,1));
+    // posList.push(Position::new(6,3));
+    // posList.push(Position::new(6,4));
+    // posList.push(Position::new(6,5));
+    // let mut statelist = Vec::new();
+    // statelist.push(posList);
+
+    let mut board_3 =  vec![
+        vec![-1,-1,-1,-1,-1,-1,-1,-1],
+        vec![-1,0,0,1,0,0,2,-1],
+        vec![-1,0,3,1,0,0,2,-1],
+        vec![-1,-1,-1,-1,-1,-1,-1,-1]];
+    let mut posList = Vec::new();
+    posList.push(Position::new(2,2));
+    posList.push(Position::new(1,3));
+    posList.push(Position::new(2,4));
+  
+    let mut statelist = Vec::new();
+    statelist.push(posList);
+    sokoban_solve(& mut board_3, 2, 2, 3,0,& mut &mut statelist);
+    // let mut l = Vec::new();
+    // l.push(1);
+    // l.push(2);
+    // l.push(3);
+    // l.pop();
+    // println!("{},{}",l[0],l[1]);
 }
 
 /// this is bubble sort
