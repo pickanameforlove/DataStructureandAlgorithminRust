@@ -100,7 +100,7 @@ fn main() {
     // posList.push(Position::new(6,5));
     // let mut statelist = Vec::new();
     // statelist.push(posList);
-
+    println!("test");
     let mut board_3 =  vec![
         vec![-1,-1,-1,-1,-1,-1,-1,-1],
         vec![-1,0,0,1,0,0,2,-1],
