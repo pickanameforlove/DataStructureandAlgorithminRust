@@ -19,10 +19,13 @@ impl PartialEq for Position{
 
 //推箱子游戏，棋盘上0代表空地，1代表箱子，-1代表墙，2代表目的地，
 //3代表人。4代表箱子在目的地上,5代表人在目的地上。
-pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delta : usize,statelist : & mut Vec<Vec<Position>>){
-    // if judge_dead(board) {
-    //     return;
-    // }
+//遇到的两个问题，一是match中出现了_的情况，原因是变量名i重复了，导致填的值的位置不对。
+//二是dfs没有搜索充分，很明显有的情况就没有搜索到，是因为判断重复状态时的return，因为可能此时index还没有到3呢？直接return后面的情况完全没有运行。
+//三是判定重复状态的时候，复制粘贴？？？？？
+pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delta : usize,statelist : & mut Vec<Vec<Position>>,stepList : &mut Vec<String>){
+    if judge_dead(board) {
+        return;
+    }
     let lenx = board.len() as i32;
     let leny = board[0].len() as i32;
     // println!("start");
@@ -42,9 +45,9 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
     let deltay = vec![1,0,-1,0];
     
     let movement = vec![String::from("R"),String::from("D"),String::from("L"),String::from("U")];
-    let mut index = delta;
-    let mut loops = 0;
-    while loops < 4{
+    let mut index = 0;
+    // let mut loops = 0;
+    while index < 4{
         let delta_x = deltax[index];
         let delta_y = deltay[index];
         let temp_x = i + delta_x;
@@ -52,7 +55,13 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
         if temp_x<lenx && temp_y < leny && 0 <= temp_x&& 0 <= temp_y{
             match board[temp_x as usize][temp_y as usize] {
                 0 => {
-                    println!("{},{}",movement[index],board[i as usize][j as usize]);
+                    if value == 3{
+                        board[i as usize][j as usize] = 0;
+                    }else if value == 5{
+                        board[i as usize][j as usize] = 2;
+                    }
+                    board[temp_x as usize][temp_y as usize] = 3;
+                    println!("{},{},{},{}",movement[index],board[i as usize][j as usize],i,j);
                     // for i in 0..lenx{
                     //     for j in 0..leny{
                     //         print!("{}\t",board[i as usize][j as usize]);
@@ -61,36 +70,38 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     // }
                     // println!();
                     
-                    if value == 3{
-                        board[i as usize][j as usize] = 0;
-                    }else if value == 5{
-                        board[i as usize][j as usize] = 2;
-                    }
-                    board[temp_x as usize][temp_y as usize] = 3;
-
-                    
 
                     let state_length = statelist.len();
                     let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
                     newstate[0].x += delta_x;
                     newstate[0].y += delta_y;
+                
+                    let mut fflag = false;
                     for index in 0..state_length{
                         let com_state = statelist.get(index).unwrap();
                         if judge_vector(com_state,  &newstate){
                             board[temp_x as usize][temp_y as usize] = 0;
                             board[i as usize][j as usize] = value;
-                            return;
+                            fflag = true;
+                            break;
                         }
                     }
-                    statelist.push(newstate);
+                    if fflag{
+                        index += 1;
+                        continue;
+                    }
                     
+                    
+                    statelist.push(newstate);
+                    stepList.push(movement[index].clone());
 
-                    sokoban_solve(board, temp_x, temp_y, 3,index,statelist);
+                    sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
                     if judge_success(board) {
                         return;
                     }
 
                     statelist.pop();
+                    stepList.pop();
                     board[temp_x as usize][temp_y as usize] = 0;
                     board[i as usize][j as usize] = value;
                 },
@@ -108,7 +119,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         board[temp_x as usize][temp_y as usize] = 3;
                         board[forward_second_x as usize][forward_second_y as usize] = 1;
 
-                        println!("{},{}",movement[index],board[i as usize][j as usize]);
+                        println!("{},{},{},{}",movement[index],board[i as usize][j as usize],i,j);
                         // for i in 0..lenx{
                         //     for j in 0..leny{
                         //         print!("{}\t",board[i as usize][j as usize]);
@@ -131,32 +142,40 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                             }
                         }
 
+                        let mut fflag = false;
                         for index in 0..state_length{
                             let com_state = statelist.get(index).unwrap();
                             if judge_vector(com_state,  &newstate){
                                 board[temp_x as usize][temp_y as usize] = 1;
                                 board[forward_second_x as usize][forward_second_y as usize] = 0;
                                 board[i as usize][j as usize] = value;
-                                return;
+                                fflag = true;
+                                break;
                             }
                         }
+                        if fflag{
+                            index += 1;
+                            continue;
+                        }
                         statelist.push(newstate);
+                        stepList.push(movement[index].clone());
 
-                        sokoban_solve(board, temp_x, temp_y, 3,index,statelist);
+                        sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
 
                         statelist.pop();
+                        stepList.pop();
 
                         board[temp_x as usize][temp_y as usize] = 1;
                         board[forward_second_x as usize][forward_second_y as usize] = 0;
                         board[i as usize][j as usize] = value;
 
                     }else if  flag == 2 {
-                        if judge_success(board) {
-                            return;
-                        }
+                        // if judge_success(board) {
+                        //     return;
+                        // }
 
                         // println!("{}",movement[index]);
                         if value == 3{
@@ -167,7 +186,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         board[temp_x as usize][temp_y as usize] = 3;
                         board[forward_second_x as usize][forward_second_y as usize] = 4;
 
-                        println!("{},{}",movement[index],board[i as usize][j as usize]);
+                        println!("{},{},{},{}",movement[index],board[i as usize][j as usize],i,j);
                         // for i in 0..lenx{
                         //     for j in 0..leny{
                         //         print!("{}\t",board[i as usize][j as usize]);
@@ -191,23 +210,30 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                             }
                         }
 
+                        let mut fflag = false;
                         for index in 0..state_length{
                             let com_state = statelist.get(index).unwrap();
                             if judge_vector(com_state,  &newstate){
                                 board[temp_x as usize][temp_y as usize] = 1;
                                 board[forward_second_x as usize][forward_second_y as usize] = 2;
                                 board[i as usize][j as usize] = value;
-                                return;
+                                fflag = true;
+                                break;
                             }
                         }
+                        if fflag{
+                            index += 1;
+                            continue;
+                        }
                         statelist.push(newstate);
-
+                        stepList.push(movement[index].clone());
                         
-                        sokoban_solve(board, temp_x, temp_y, 3,index,statelist);
+                        sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
                         statelist.pop();
+                        stepList.pop();
                         board[temp_x as usize][temp_y as usize] = 1;
                         board[forward_second_x as usize][forward_second_y as usize] = 2;
                         board[i as usize][j as usize] = value;
@@ -215,9 +241,9 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     }
                 },
                 -1 => {
-                    loops += 1;
+                    // loops += 1;
                     index += 1;
-                    index = index % 4;
+                    // index = index % 4;
                     continue},
                 2 => {
                     // println!("{}",movement[index]);
@@ -228,7 +254,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     }
                     board[temp_x as usize][temp_y as usize] = 5;
 
-                    println!("{},{}",movement[index],board[i as usize][j as usize]);
+                    println!("{},{},{},{}",movement[index],board[i as usize][j as usize],i,j);
                     // for i in 0..lenx{
                     //     for j in 0..leny{
                     //         print!("{}\t",board[i as usize][j as usize]);
@@ -242,21 +268,28 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     newstate[0].x += delta_x;
                     newstate[0].y += delta_y;
 
+                    let mut fflag = false;
                     for index in 0..state_length{
                         let com_state = statelist.get(index).unwrap();
                         if judge_vector(com_state,  &newstate){
                             board[i as usize][j as usize] = value;
                             board[temp_x as usize][temp_y as usize] = 2;
-                            return;
+                            fflag = true;
+                            break;
                         }
                     }
+                    if fflag{
+                        index += 1;
+                        continue;
+                    }
                     statelist.push(newstate);
-
-                    sokoban_solve(board, temp_x, temp_y, 5,index,statelist);
+                    stepList.push(movement[index].clone());
+                    sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
                     if judge_success(board) {
                         return;
                     }
                     statelist.pop();
+                    stepList.pop();
                     board[i as usize][j as usize] = value;
                     board[temp_x as usize][temp_y as usize] = 2;
                 },
@@ -274,7 +307,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         board[temp_x as usize][temp_y as usize] = 5;
                         board[forward_second_x as usize][forward_second_y as usize] = 1;
 
-                        println!("{},{}",movement[index],board[i as usize][j as usize]);
+                        println!("{},{},{},{}",movement[index],board[i as usize][j as usize],i,j);
                         // for i in 0..lenx{
                         //     for j in 0..leny{
                         //         print!("{}\t",board[i as usize][j as usize]);
@@ -298,22 +331,30 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                             }
                         }
 
+                        let mut fflag = false;
                         for index in 0..state_length{
                             let com_state = statelist.get(index).unwrap();
                             if judge_vector(com_state,  &newstate){
                                 board[temp_x as usize][temp_y as usize] = 4;
                                 board[forward_second_x as usize][forward_second_y as usize] = 0;
                                 board[i as usize][j as usize] = value;
-                                return;
+                                fflag = true;
+                                break;
                             }
                         }
+                        if fflag{
+                            index += 1;
+                            continue;
+                        }
                         statelist.push(newstate);
+                        stepList.push(movement[index].clone());
 
-                        sokoban_solve(board, temp_x, temp_y, 5,index,statelist);
+                        sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
                         statelist.pop();
+                        stepList.pop();
                         board[temp_x as usize][temp_y as usize] = 4;
                         board[forward_second_x as usize][forward_second_y as usize] = 0;
                         board[i as usize][j as usize] = value;
@@ -327,7 +368,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         board[temp_x as usize][temp_y as usize] = 5;
                         board[forward_second_x as usize][forward_second_y as usize] = 4;
 
-                        println!("{},{}",movement[index],board[i as usize][j as usize]);
+                        println!("{},{},{},{}",movement[index],board[i as usize][j as usize],i,j);
                         // for i in 0..lenx{
                         //     for j in 0..leny{
                         //         print!("{}\t",board[i as usize][j as usize]);
@@ -350,22 +391,32 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                             }
                         }
 
+                        let mut fflag = false;
                         for index in 0..state_length{
                             let com_state = statelist.get(index).unwrap();
                             if judge_vector(com_state,  &newstate){
                                 board[temp_x as usize][temp_y as usize] = 4;
                                 board[forward_second_x as usize][forward_second_y as usize] = 2;
                                 board[i as usize][j as usize] = value;
-                                return;
+                                fflag = true;
+                                break;
                             }
                         }
+                        if fflag{
+                            index += 1;
+                            continue;
+                        }
                         statelist.push(newstate);
+                        stepList.push(movement[index].clone());
 
-                        sokoban_solve(board, temp_x, temp_y, 5,index,statelist);
+
+                        sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
                         statelist.pop();
+                        stepList.pop();
+
                         board[temp_x as usize][temp_y as usize] = 4;
                         board[forward_second_x as usize][forward_second_y as usize] = 2;
                         board[i as usize][j as usize] = value;
@@ -385,12 +436,19 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
 
             }
         }
-        loops += 1;
+        // loops += 1;
         index += 1;
-        index = index % 4;
+        // index = index % 4;
     }
 }
 fn judge_success(board: &Vec<Vec<i32>>) -> bool{
+    // for i in 0..7{
+    //     for j in 0..7{
+    //         print!("{}\t",board[i as usize][j as usize]);
+    //     }
+    //     println!();
+    // }
+    // println!();
     let lenx = board.len() as i32;
     let leny = board[0].len() as i32;
     let mut i_x = 0;
@@ -399,12 +457,14 @@ fn judge_success(board: &Vec<Vec<i32>>) -> bool{
         i_y = 0;
         while i_y < leny {
             if board[i_x as usize][i_y as usize] == 1 || board[i_x as usize][i_y as usize] == 2{
+                // println!("{}",0);
                 return false;
             }
             i_y += 1;
         }
         i_x += 1;
     }
+    // println!("{}",1);
     return true;
 
 }
