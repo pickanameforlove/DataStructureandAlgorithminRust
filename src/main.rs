@@ -78,48 +78,46 @@ fn main() {
     println!("");
     node6.lasttravel();
     println!("");
-    let mut board_2 = vec![
-        vec![-1,-1,-1,-1,-1,-1,-1,-1],
-        vec![-1,-1,-1,0,0,0,-1,-1],
-        vec![-1,2,3,1,0,0,-1,-1],
-        vec![-1,-1,-1,0,1,2,-1,-1],
-        vec![-1,2,-1,-1,1,0,-1,-1],
-        vec![-1,0,-1,0,2,0,-1,-1],
-        vec![-1,1,0,4,1,1,2,-1],
-        vec![-1,0,0,0,2,0,0,-1],
-        vec![-1,-1,-1,-1,-1,-1,-1,-1]];
+    // let mut board_2 = vec![
+    //     vec![-1,-1,-1,-1,-1,-1,-1,-1],
+    //     vec![-1,-1,-1,0,0,0,-1,-1],
+    //     vec![-1,2,3,1,0,0,-1,-1],
+    //     vec![-1,-1,-1,0,1,2,-1,-1],
+    //     vec![-1,2,-1,-1,1,0,-1,-1],
+    //     vec![-1,0,-1,0,2,0,-1,-1],
+    //     vec![-1,1,0,4,1,1,2,-1],
+    //     vec![-1,0,0,0,2,0,0,-1],
+    //     vec![-1,-1,-1,-1,-1,-1,-1,-1]];
 
-    let mut posList = Vec::new();
-    posList.push(Position::new(2,2));
-    posList.push(Position::new(2,3));
-    posList.push(Position::new(3,4));
-    posList.push(Position::new(4,4));
-    posList.push(Position::new(6,1));
-    posList.push(Position::new(6,3));
-    posList.push(Position::new(6,4));
-    posList.push(Position::new(6,5));
-    let mut statelist = Vec::new();
-    statelist.push(posList);
-    // let mut board_3 =  vec![
-    //     vec![-1,-1,-1,-1,-1,-1,-1],
-    //     vec![-1,-1,-1,0,0,0,-1],
-    //     vec![-1,-1,0,0,1,3,-1],
-    //     vec![-1,2,0,1,0,-1,-1],
-    //     vec![-1,2,1,0,-1,-1,-1],
-    //     vec![-1,2,0,-1,-1,-1,-1],
-    //     vec![-1,-1,-1,-1,-1,-1,-1]];
     // let mut posList = Vec::new();
-    // posList.push(Position::new(2,5));
-    // posList.push(Position::new(2,4));
-    // posList.push(Position::new(3,3));
-    // posList.push(Position::new(4,2));
-  
+    // posList.push(Position::new(2,2));
+    // posList.push(Position::new(2,3));
+    // posList.push(Position::new(3,4));
+    // posList.push(Position::new(4,4));
+    // posList.push(Position::new(6,1));
+    // posList.push(Position::new(6,3));
+    // posList.push(Position::new(6,4));
+    // posList.push(Position::new(6,5));
     // let mut statelist = Vec::new();
+    // statelist.push(posList);
+    let mut board_3 =  vec![
+        vec![-1,-1,-1,-1,-1,-1,-1],
+        vec![-1,-1,0,2,0,-1,-1],
+        vec![-1,0,0,1,3,-1,-1],
+        vec![-1,0,0,1,0,0,-1],
+        vec![-1,-1,0,2,0,-1,-1],
+        vec![-1,-1,-1,-1,-1,-1,-1]];
+    // let mut posList = Vec::new();
+    // posList.push(Position::new(2,4));
+    // posList.push(Position::new(2,3));
+    // posList.push(Position::new(3,3));
+  
+    let mut statelist = Vec::new();
     // statelist.push(posList);
 
     let mut steplist = Vec::new();
     steplist.push(String::from("start"));
-    sokoban_solve(& mut  board_2, 2, 2, 3,0,&mut statelist,&mut steplist);
+    sokoban_solve(& mut  board_3, 2, 4, 3,0,&mut statelist,&mut steplist);
     for i in steplist{
         print!("{}\t",i);
     }

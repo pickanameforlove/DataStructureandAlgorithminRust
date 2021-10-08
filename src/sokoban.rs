@@ -36,15 +36,39 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
     //     println!();
     // }
     // println!();
+    let state_length = statelist.len();
+    let mut newstate = Vec::new();
+    for i in 0..lenx{
+        for j in 0..leny{
+            if board[i as usize][j as usize]==value{
+                newstate.push(Position::new(i, j));
+            }
+        }
+    }
+    for i in 0..lenx{
+        for j in 0..leny{
+            if board[i as usize][j as usize]==1 || board[i as usize][j as usize]==4{
+                newstate.push(Position::new(i, j));
+            }
+        }
+    }
+    for index in 0..state_length{
+        let com_state = statelist.get(index).unwrap();
+        if judge_vector(com_state,  &newstate){
+            return;
+        }
+    }
+    statelist.push(newstate);
+    
     if judge_success(board) {
         return;
     }
     
     
-    let deltax = vec![0,1,0,-1];
-    let deltay = vec![1,0,-1,0];
+    let deltax = vec![-1,0,1,0];
+    let deltay = vec![0,1,0,-1];
     
-    let movement = vec![String::from("R"),String::from("D"),String::from("L"),String::from("U")];
+    let movement = vec![String::from("U"),String::from("R"),String::from("D"),String::from("L")];
     let mut index = 0;
     // let mut loops = 0;
     while index < 4{
@@ -71,28 +95,28 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     // println!();
                     
 
-                    let state_length = statelist.len();
-                    let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
-                    newstate[0].x += delta_x;
-                    newstate[0].y += delta_y;
+                    // let state_length = statelist.len();
+                    // let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
+                    // newstate[0].x += delta_x;
+                    // newstate[0].y += delta_y;
                 
-                    let mut fflag = false;
-                    for index in 0..state_length{
-                        let com_state = statelist.get(index).unwrap();
-                        if judge_vector(com_state,  &newstate){
-                            board[temp_x as usize][temp_y as usize] = 0;
-                            board[i as usize][j as usize] = value;
-                            fflag = true;
-                            break;
-                        }
-                    }
-                    if fflag{
-                        index += 1;
-                        continue;
-                    }
+                    // let mut fflag = false;
+                    // for index in 0..state_length{
+                    //     let com_state = statelist.get(index).unwrap();
+                    //     if judge_vector(com_state,  &newstate){
+                    //         board[temp_x as usize][temp_y as usize] = 0;
+                    //         board[i as usize][j as usize] = value;
+                    //         fflag = true;
+                    //         break;
+                    //     }
+                    // }
+                    // if fflag{
+                    //     index += 1;
+                    //     continue;
+                    // }
                     
                     
-                    statelist.push(newstate);
+                    // statelist.push(newstate);
                     stepList.push(movement[index].clone());
 
                     sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
@@ -100,7 +124,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         return;
                     }
 
-                    statelist.pop();
+                    // statelist.pop();
                     stepList.pop();
                     board[temp_x as usize][temp_y as usize] = 0;
                     board[i as usize][j as usize] = value;
@@ -128,36 +152,36 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         // }
                         // println!();
 
-                        let state_length = statelist.len();
-                        let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
-                        newstate[0].x += delta_x;
-                        newstate[0].y += delta_y;
-                        let position_length = newstate.len();
-                        for i in 0..position_length{
-                            let pos = newstate[i].clone();
-                            if pos.x==temp_x && pos.y == temp_y{
-                                newstate[i].x += delta_x;
-                                newstate[i].y += delta_y;
-                                break;
-                            }
-                        }
+                        // let state_length = statelist.len();
+                        // let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
+                        // newstate[0].x += delta_x;
+                        // newstate[0].y += delta_y;
+                        // let position_length = newstate.len();
+                        // for i in 0..position_length{
+                        //     let pos = newstate[i].clone();
+                        //     if pos.x==temp_x && pos.y == temp_y{
+                        //         newstate[i].x += delta_x;
+                        //         newstate[i].y += delta_y;
+                        //         break;
+                        //     }
+                        // }
 
-                        let mut fflag = false;
-                        for index in 0..state_length{
-                            let com_state = statelist.get(index).unwrap();
-                            if judge_vector(com_state,  &newstate){
-                                board[temp_x as usize][temp_y as usize] = 1;
-                                board[forward_second_x as usize][forward_second_y as usize] = 0;
-                                board[i as usize][j as usize] = value;
-                                fflag = true;
-                                break;
-                            }
-                        }
-                        if fflag{
-                            index += 1;
-                            continue;
-                        }
-                        statelist.push(newstate);
+                        // let mut fflag = false;
+                        // for index in 0..state_length{
+                        //     let com_state = statelist.get(index).unwrap();
+                        //     if judge_vector(com_state,  &newstate){
+                        //         board[temp_x as usize][temp_y as usize] = 1;
+                        //         board[forward_second_x as usize][forward_second_y as usize] = 0;
+                        //         board[i as usize][j as usize] = value;
+                        //         fflag = true;
+                        //         break;
+                        //     }
+                        // }
+                        // if fflag{
+                        //     index += 1;
+                        //     continue;
+                        // }
+                        // statelist.push(newstate);
                         stepList.push(movement[index].clone());
 
                         sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
@@ -165,7 +189,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                             return;
                         }
 
-                        statelist.pop();
+                        // statelist.pop();
                         stepList.pop();
 
                         board[temp_x as usize][temp_y as usize] = 1;
@@ -196,43 +220,43 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         // println!();
 
 
-                        let state_length = statelist.len();
-                        let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
-                        newstate[0].x += delta_x;
-                        newstate[0].y += delta_y;
-                        let position_length = newstate.len();
-                        for i in 0..position_length{
-                            let pos = newstate[i].clone();
-                            if pos.x==temp_x && pos.y == temp_y{
-                                newstate[i].x += delta_x;
-                                newstate[i].y += delta_y;
-                                break;
-                            }
-                        }
+                        // let state_length = statelist.len();
+                        // let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
+                        // newstate[0].x += delta_x;
+                        // newstate[0].y += delta_y;
+                        // let position_length = newstate.len();
+                        // for i in 0..position_length{
+                        //     let pos = newstate[i].clone();
+                        //     if pos.x==temp_x && pos.y == temp_y{
+                        //         newstate[i].x += delta_x;
+                        //         newstate[i].y += delta_y;
+                        //         break;
+                        //     }
+                        // }
 
-                        let mut fflag = false;
-                        for index in 0..state_length{
-                            let com_state = statelist.get(index).unwrap();
-                            if judge_vector(com_state,  &newstate){
-                                board[temp_x as usize][temp_y as usize] = 1;
-                                board[forward_second_x as usize][forward_second_y as usize] = 2;
-                                board[i as usize][j as usize] = value;
-                                fflag = true;
-                                break;
-                            }
-                        }
-                        if fflag{
-                            index += 1;
-                            continue;
-                        }
-                        statelist.push(newstate);
+                        // let mut fflag = false;
+                        // for index in 0..state_length{
+                        //     let com_state = statelist.get(index).unwrap();
+                        //     if judge_vector(com_state,  &newstate){
+                        //         board[temp_x as usize][temp_y as usize] = 1;
+                        //         board[forward_second_x as usize][forward_second_y as usize] = 2;
+                        //         board[i as usize][j as usize] = value;
+                        //         fflag = true;
+                        //         break;
+                        //     }
+                        // }
+                        // if fflag{
+                        //     index += 1;
+                        //     continue;
+                        // }
+                        // statelist.push(newstate);
                         stepList.push(movement[index].clone());
                         
                         sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
-                        statelist.pop();
+                        // statelist.pop();
                         stepList.pop();
                         board[temp_x as usize][temp_y as usize] = 1;
                         board[forward_second_x as usize][forward_second_y as usize] = 2;
@@ -263,32 +287,32 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     // }
                     // println!();
 
-                    let state_length = statelist.len();
-                    let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
-                    newstate[0].x += delta_x;
-                    newstate[0].y += delta_y;
+                    // let state_length = statelist.len();
+                    // let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
+                    // newstate[0].x += delta_x;
+                    // newstate[0].y += delta_y;
 
-                    let mut fflag = false;
-                    for index in 0..state_length{
-                        let com_state = statelist.get(index).unwrap();
-                        if judge_vector(com_state,  &newstate){
-                            board[i as usize][j as usize] = value;
-                            board[temp_x as usize][temp_y as usize] = 2;
-                            fflag = true;
-                            break;
-                        }
-                    }
-                    if fflag{
-                        index += 1;
-                        continue;
-                    }
-                    statelist.push(newstate);
+                    // let mut fflag = false;
+                    // for index in 0..state_length{
+                    //     let com_state = statelist.get(index).unwrap();
+                    //     if judge_vector(com_state,  &newstate){
+                    //         board[i as usize][j as usize] = value;
+                    //         board[temp_x as usize][temp_y as usize] = 2;
+                    //         fflag = true;
+                    //         break;
+                    //     }
+                    // }
+                    // if fflag{
+                    //     index += 1;
+                    //     continue;
+                    // }
+                    // statelist.push(newstate);
                     stepList.push(movement[index].clone());
                     sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
                     if judge_success(board) {
                         return;
                     }
-                    statelist.pop();
+                    // statelist.pop();
                     stepList.pop();
                     board[i as usize][j as usize] = value;
                     board[temp_x as usize][temp_y as usize] = 2;
@@ -317,43 +341,43 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         // println!();
 
 
-                        let state_length = statelist.len();
-                        let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
-                        newstate[0].x += delta_x;
-                        newstate[0].y += delta_y;
-                        let position_length = newstate.len();
-                        for i in 0..position_length{
-                            let pos = newstate[i].clone();
-                            if pos.x==temp_x && pos.y == temp_y{
-                                newstate[i].x += delta_x;
-                                newstate[i].y += delta_y;
-                                break;
-                            }
-                        }
+                        // let state_length = statelist.len();
+                        // let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
+                        // newstate[0].x += delta_x;
+                        // newstate[0].y += delta_y;
+                        // let position_length = newstate.len();
+                        // for i in 0..position_length{
+                        //     let pos = newstate[i].clone();
+                        //     if pos.x==temp_x && pos.y == temp_y{
+                        //         newstate[i].x += delta_x;
+                        //         newstate[i].y += delta_y;
+                        //         break;
+                        //     }
+                        // }
 
-                        let mut fflag = false;
-                        for index in 0..state_length{
-                            let com_state = statelist.get(index).unwrap();
-                            if judge_vector(com_state,  &newstate){
-                                board[temp_x as usize][temp_y as usize] = 4;
-                                board[forward_second_x as usize][forward_second_y as usize] = 0;
-                                board[i as usize][j as usize] = value;
-                                fflag = true;
-                                break;
-                            }
-                        }
-                        if fflag{
-                            index += 1;
-                            continue;
-                        }
-                        statelist.push(newstate);
+                        // let mut fflag = false;
+                        // for index in 0..state_length{
+                        //     let com_state = statelist.get(index).unwrap();
+                        //     if judge_vector(com_state,  &newstate){
+                        //         board[temp_x as usize][temp_y as usize] = 4;
+                        //         board[forward_second_x as usize][forward_second_y as usize] = 0;
+                        //         board[i as usize][j as usize] = value;
+                        //         fflag = true;
+                        //         break;
+                        //     }
+                        // }
+                        // if fflag{
+                        //     index += 1;
+                        //     continue;
+                        // }
+                        // statelist.push(newstate);
                         stepList.push(movement[index].clone());
 
                         sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
-                        statelist.pop();
+                        // statelist.pop();
                         stepList.pop();
                         board[temp_x as usize][temp_y as usize] = 4;
                         board[forward_second_x as usize][forward_second_y as usize] = 0;
@@ -377,36 +401,36 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         // }
                         // println!();
 
-                        let state_length = statelist.len();
-                        let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
-                        newstate[0].x += delta_x;
-                        newstate[0].y += delta_y;
-                        let position_length = newstate.len();
-                        for i in 0..position_length{
-                            let pos = newstate[i].clone();
-                            if pos.x==temp_x && pos.y == temp_y{
-                                newstate[i].x += delta_x;
-                                newstate[i].y += delta_y;
-                                break;
-                            }
-                        }
+                        // let state_length = statelist.len();
+                        // let mut newstate = (*statelist.get(state_length - 1).unwrap()).clone();
+                        // newstate[0].x += delta_x;
+                        // newstate[0].y += delta_y;
+                        // let position_length = newstate.len();
+                        // for i in 0..position_length{
+                        //     let pos = newstate[i].clone();
+                        //     if pos.x==temp_x && pos.y == temp_y{
+                        //         newstate[i].x += delta_x;
+                        //         newstate[i].y += delta_y;
+                        //         break;
+                        //     }
+                        // }
 
-                        let mut fflag = false;
-                        for index in 0..state_length{
-                            let com_state = statelist.get(index).unwrap();
-                            if judge_vector(com_state,  &newstate){
-                                board[temp_x as usize][temp_y as usize] = 4;
-                                board[forward_second_x as usize][forward_second_y as usize] = 2;
-                                board[i as usize][j as usize] = value;
-                                fflag = true;
-                                break;
-                            }
-                        }
-                        if fflag{
-                            index += 1;
-                            continue;
-                        }
-                        statelist.push(newstate);
+                        // let mut fflag = false;
+                        // for index in 0..state_length{
+                        //     let com_state = statelist.get(index).unwrap();
+                        //     if judge_vector(com_state,  &newstate){
+                        //         board[temp_x as usize][temp_y as usize] = 4;
+                        //         board[forward_second_x as usize][forward_second_y as usize] = 2;
+                        //         board[i as usize][j as usize] = value;
+                        //         fflag = true;
+                        //         break;
+                        //     }
+                        // }
+                        // if fflag{
+                        //     index += 1;
+                        //     continue;
+                        // }
+                        // statelist.push(newstate);
                         stepList.push(movement[index].clone());
 
 
@@ -414,7 +438,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         if judge_success(board) {
                             return;
                         }
-                        statelist.pop();
+                        // statelist.pop();
                         stepList.pop();
 
                         board[temp_x as usize][temp_y as usize] = 4;
@@ -469,18 +493,46 @@ fn judge_success(board: &Vec<Vec<i32>>) -> bool{
 
 }
 fn judge_dead(board: &Vec<Vec<i32>>) -> bool {
+    let pattern = vec![
+        vec![0,1,2,3,4,5,6,7,8],
+        vec![2,5,8,1,4,7,0,3,6],
+        vec![8,7,6,5,4,3,2,1,0],
+        vec![6,3,0,7,4,1,8,5,2],
+        vec![2,1,0,5,4,3,8,7,6],
+        vec![0,3,6,1,4,7,2,5,8],
+        vec![6,7,8,3,4,5,0,1,2],
+        vec![8,5,2,7,4,1,6,3,0]
+    ];
     let lenx = board.len() as i32;
     let leny = board[0].len() as i32;
-    let mut i_x = 0;
-    let mut i_y = 0;
+    let mut i_x = 1;
+    let mut i_y = 1;
     while i_x < lenx{
         i_y = 0;
         while i_y < leny {
             if board[i_x as usize][i_y as usize] == 1{
-               if board[(i_x+1) as usize][i_y as usize] == -1 &&(board[i_x as usize][(i_y+1) as usize] == -1 || board[i_x as usize][(i_y-1) as usize] == -1) {
-                   return true;
-               }else if board[(i_x-1) as usize][i_y as usize] == -1 &&(board[i_x as usize][(i_y+1) as usize] == -1 || board[i_x as usize][(i_y-1) as usize] == -1){
-                   return true;
+                let pattern_board_x = vec![i_x-1,i_x-1,i_x-1,i_x,i_x,i_x,i_x+1,i_x+1,i_x+1];
+                let pattern_board_y = vec![i_y-1,i_y,i_y+1,i_y-1,i_y,i_y+1,i_y-1,i_y,i_y+1];
+                for j_pattern in &pattern{
+                let mut new_pattern_board = Vec::new();
+                for k in j_pattern{
+                    // println!("{:?}",j_pattern);
+                    let value = board[pattern_board_x[*k] as usize][pattern_board_y[*k] as usize];
+                    new_pattern_board.push(value);
+                }
+                if new_pattern_board[1]==-1 &&new_pattern_board[5]==-1{
+                    return true;
+                }else if new_pattern_board[1]==1 &&new_pattern_board[2]==-1 &&new_pattern_board[5]==-1 {
+                    return true;
+                }else if new_pattern_board[1]==1 &&new_pattern_board[2]==-1 &&new_pattern_board[5]==1 {
+                    return true;
+                }else if  new_pattern_board[1]==1 &&new_pattern_board[2]==1 &&new_pattern_board[5]==1{
+                    return true;
+                }else if new_pattern_board[1]==1 &&new_pattern_board[6]==1 &&new_pattern_board[2]==-1&&new_pattern_board[3]==-1 &&new_pattern_board[8]==-1 {
+                    return true;
+                }
+
+                   
                }
                 
             }
