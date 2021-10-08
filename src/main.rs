@@ -100,7 +100,7 @@ fn main() {
 
     let mut steplist = Vec::new();
     steplist.push(String::from("start"));
-    sokoban_solve(& mut  board_3, 1, 3, 5,0,&mut statelist,&mut steplist);
+    sokoban_solve(& mut  board_3, 5,&mut statelist,&mut steplist);
     for i in steplist{
         print!("{}\t",i);
     }

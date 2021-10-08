@@ -24,19 +24,22 @@ impl PartialEq for Position{
 //三是判定重复状态的时候，复制粘贴？？？？？
 //遗留下问题，在sokoban_solve一开始判定重复状态和在match的各个子arm中判定重复状态有什么不同？
 //遗留下问题，为什么最终输出的steplist有所遗漏？原来是terminal的限制。。。
-pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delta : usize,statelist : & mut Vec<Vec<Position>>,stepList : &mut Vec<String>){
+pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,value : i32,statelist : & mut Vec<Vec<Position>>,stepList : &mut Vec<String>){
     if judge_dead(board) {
         return;
     }
     let lenx = board.len() as i32;
     let leny = board[0].len() as i32;
-
+    let mut i = 0;
+    let mut j = 0;
     let state_length = statelist.len();
     let mut newstate = Vec::new();
-    for i in 0..lenx{
-        for j in 0..leny{
-            if board[i as usize][j as usize]==value{
-                newstate.push(Position::new(i, j));
+    for i1 in 0..lenx{
+        for j1 in 0..leny{
+            if board[i1 as usize][j1 as usize]==value{
+                newstate.push(Position::new(i1, j1));
+                i = i1;
+                j = j1;
             }
         }
     }
@@ -81,7 +84,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     board[temp_x as usize][temp_y as usize] = 3;
                     stepList.push(movement[index].clone());
 
-                    sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
+                    sokoban_solve(board, 3,statelist,stepList);
                     if judge_success(board) {
                         return;
                     }
@@ -103,7 +106,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         board[forward_second_x as usize][forward_second_y as usize] = 1;
                         stepList.push(movement[index].clone());
 
-                        sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
+                        sokoban_solve(board, 3,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
@@ -125,7 +128,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
 
                         stepList.push(movement[index].clone());
                         
-                        sokoban_solve(board, temp_x, temp_y, 3,index,statelist,stepList);
+                        sokoban_solve(board, 3,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
@@ -148,7 +151,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                     board[temp_x as usize][temp_y as usize] = 5;
 
                     stepList.push(movement[index].clone());
-                    sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
+                    sokoban_solve(board, 5,statelist,stepList);
                     if judge_success(board) {
                         return;
                     }
@@ -171,7 +174,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
 
                         stepList.push(movement[index].clone());
 
-                        sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
+                        sokoban_solve(board, 5,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
@@ -191,7 +194,7 @@ pub fn sokoban_solve(board: & mut Vec<Vec<i32>>,i : i32,j : i32,value : i32,delt
                         stepList.push(movement[index].clone());
 
 
-                        sokoban_solve(board, temp_x, temp_y, 5,index,statelist,stepList);
+                        sokoban_solve(board, 5,statelist,stepList);
                         if judge_success(board) {
                             return;
                         }
