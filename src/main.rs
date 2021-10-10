@@ -3,6 +3,7 @@ mod LinkedList;
 mod gameTree;
 mod tree;
 mod sokoban;
+mod AVL;
 
 use graph::*;
 use LinkedList::*;
@@ -89,18 +90,19 @@ fn main() {
     //     vec![-1,0,0,0,2,0,0,-1],
     //     vec![-1,-1,-1,-1,-1,-1,-1,-1]];
     let mut board_3 =  vec![
-        vec![-1,-1,-1,-1,-1,-1],
-        vec![-1,2,2,5,2,-1],
-        vec![-1,1,1,1,1,-1],
-        vec![-1,0,0,0,0,-1],
-        vec![-1,0,0,0,0,-1],
-        vec![-1,-1,-1,-1,-1,-1]];
+        vec![-1,-1,-1,-1,-1,-1,-1],
+        vec![-1,2,0,0,0,2,-1],
+        vec![-1,0,4,1,1,0,-1],
+        vec![-1,0,1,3,1,2,-1],
+        vec![-1,0,1,1,4,0,-1],
+        vec![-1,2,0,0,0,2,-1],
+        vec![-1,-1,-1,-1,-1,-1,-1]];
   
     let mut statelist = Vec::new();
 
     let mut steplist = Vec::new();
     steplist.push(String::from("start"));
-    sokoban_solve(& mut  board_3, 5,&mut statelist,&mut steplist);
+    sokoban_solve(& mut  board_3, 3,&mut statelist,&mut steplist);
     for i in steplist{
         print!("{}\t",i);
     }
