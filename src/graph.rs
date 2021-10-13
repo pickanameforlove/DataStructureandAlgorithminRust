@@ -71,3 +71,14 @@ fn get_father(father : &[u32],n:u32) -> u32{
         
 //     }
 // }
+#[cfg(test)]
+mod test{
+    use super::*;
+    #[test]
+    fn kruskal_test(){
+        let mut edgelist = vec![Edge::new(1, 2, 7),Edge::new(1, 4, 5),Edge::new(4, 2, 9),Edge::new(3, 2, 8),Edge::new(5, 2, 7),
+            Edge::new(3, 5, 5),Edge::new(4, 5, 15),Edge::new(4, 6, 6),Edge::new(5, 6, 8),Edge::new(5, 7, 9),Edge::new(6, 7, 11)];
+
+        kruskal(&mut edgelist, 7);
+    }
+}

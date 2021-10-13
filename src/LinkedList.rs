@@ -161,3 +161,24 @@ impl LinkedList{
 
     }
 }
+
+#[cfg(test)]
+mod test{
+    use super::LinkedList;
+    #[test]
+    fn linkedlist_test(){
+        let mut linkedlist = LinkedList::new();
+        linkedlist.push(1);
+        linkedlist.push(2);
+        linkedlist.display();
+        linkedlist.push(3);
+        linkedlist.insert(4, 0);
+        linkedlist.display();
+        // let v = linkedlist.pop();
+        // println!("value is {}",v);
+        linkedlist.delete(4);
+        linkedlist.display();
+        linkedlist.update(0, 5);
+        linkedlist.display();
+    }
+}

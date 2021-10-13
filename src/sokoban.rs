@@ -308,3 +308,38 @@ fn judge_vector(v1:&Vec<Position>,v2:&Vec<Position>) -> bool{
     }
     return true;
 }
+#[cfg(test)]
+mod test{
+    use super::*;
+    #[test]
+    fn test(){
+        let mut board_2 = vec![
+            vec![-1,-1,-1,-1,-1,-1,-1,-1],
+            vec![-1,-1,-1,0,0,0,-1,-1],
+            vec![-1,2,3,1,0,0,-1,-1],
+            vec![-1,-1,-1,0,1,2,-1,-1],
+            vec![-1,2,-1,-1,1,0,-1,-1],
+            vec![-1,0,-1,0,2,0,-1,-1],
+            vec![-1,1,0,4,1,1,2,-1],
+            vec![-1,0,0,0,2,0,0,-1],
+            vec![-1,-1,-1,-1,-1,-1,-1,-1]];
+        // let mut board_3 =  vec![
+        //     vec![-1,-1,-1,-1,-1,-1,-1],
+        //     vec![-1,2,0,0,0,2,-1],
+        //     vec![-1,0,4,1,1,0,-1],
+        //     vec![-1,0,1,3,1,2,-1],
+        //     vec![-1,0,1,1,4,0,-1],
+        //     vec![-1,2,0,0,0,2,-1],
+        //     vec![-1,-1,-1,-1,-1,-1,-1]];
+    
+        let mut statelist = Vec::new();
+
+        let mut steplist = Vec::new();
+        steplist.push(String::from("start"));
+        sokoban_solve(& mut  board_2, 3,&mut statelist,&mut steplist);
+        for i in steplist{
+            print!("{}\t",i);
+        }
+        println!("");
+    }
+}
