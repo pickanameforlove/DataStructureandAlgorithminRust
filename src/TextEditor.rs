@@ -4,6 +4,7 @@ use tauri_hotkey::{parse_hotkey, HotkeyManager};
 
 pub struct TextEditor {
     pub content : String,
+    pub content_copy : String,
     pub saveKey : String,
     pub BindingKeyManager : HotkeyManager,
     pub rec : Arc<Mutex<Receiver<String>>>,
@@ -20,7 +21,11 @@ impl epi::App for TextEditor{
         self.register_bindingKey();
     }
     fn update(&mut self, ctx: &eframe::egui::CtxRef, frame: &mut epi::Frame<'_>) {
-        self.send.send(self.content.clone()).unwrap();
+
+        if self.content != self.content_copy{
+            self.send.send(self.content.clone()).unwrap();
+            self.content_copy = self.content.clone();
+        }
         CentralPanel::default().show(ctx, |ui| {
             use eframe::egui::menu;
 
@@ -59,14 +64,17 @@ impl TextEditor{
         let rec_clone = Arc::clone(&self.rec);
         if let Err(err) = key_mng.register(parse_hotkey(self.saveKey.as_str()).unwrap(),  move|| {
             loop{
-                match rec_clone.lock().unwrap().try_recv() {
+                match rec_clone.lock().unwrap().recv()  {
                     Ok(content) => {
                         save(&content);
-                        if content != String::from(""){
-                            break;
-                        }
+                        // std::process::exit(0);
+                        // break;
                         },
-                    Err(_) => println!("213")
+                    Err(_) => {
+                        println!("213");
+                        std::process::exit(0);
+                        break;
+                }
                 }
                 
             }

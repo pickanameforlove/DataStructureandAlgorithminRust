@@ -25,6 +25,7 @@ fn main() {
     let (send,rec) = mpsc::channel();
     let app = TextEditor::TextEditor{
         content : String::from(""),
+        content_copy : String::from(""),
         saveKey : String::from("CMDORCTRL+S"),
         BindingKeyManager : HotkeyManager::new(),
         rec : Arc::new(Mutex::new(rec)),
