@@ -10,3 +10,4 @@ edition = "2018"
 eframe = "0.14.0"
 enigo = { git = "https://github.com/enigo-rs/enigo" }
 tauri-hotkey = "0.1.2"
+native-dialog = "*"

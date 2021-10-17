@@ -1,7 +1,8 @@
 use eframe::epi;
 use eframe::egui::containers::*;
 use tauri_hotkey::{parse_hotkey, HotkeyManager};
-
+use native_dialog::{FileDialog, MessageDialog, MessageType};
+use std::fs;
 pub struct TextEditor {
     pub content : String,
     pub content_copy : String,
@@ -37,6 +38,29 @@ impl epi::App for TextEditor{
                         f.write(&self.content.as_bytes());
                         self.content = String::from("");
                     }
+                    if ui.button("open").clicked(){
+                        let path = FileDialog::new()
+                            .set_location("C:")
+                            .add_filter("txt file", &["txt"])
+                            .show_open_single_file()
+                            .unwrap();
+                        let path = match path {
+                            Some(path) => path,
+                            None => return,
+                        };
+
+                        let yes = MessageDialog::new()
+                            .set_type(MessageType::Info)
+                            .set_title("Do you want to open the file?")
+                            .set_text(&format!("{:#?}", path))
+                            .show_confirm()
+                            .unwrap();
+
+                        if yes {
+                            // do_something(path);
+                            self.open(path.to_str().unwrap());
+                        }
+                    }
                     
                 })
             });
@@ -63,6 +87,7 @@ impl TextEditor{
         
         let send_clone = self.send.clone();
         if let Err(err) = key_mng.register(parse_hotkey(self.saveKey.as_str()).unwrap(),  move|| {
+            //这里相当于一个触发器
             send_clone.send(String::from("yes")).unwrap();
         }) {
             panic!("{:?}", err);
@@ -73,6 +98,12 @@ impl TextEditor{
         let mut f = File::create("foo.txt").expect("open error");
         f.write(self.content.as_bytes());
         std::process::exit(0);
+    }
+    pub fn open(&mut self,path : &str){
+        let contents = fs::read_to_string(path)
+            .expect("Something went wrong reading the file");
+
+        self.content = contents;
     }
    
 }

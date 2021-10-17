@@ -13,6 +13,7 @@ use TextEditor::*;
 use eframe::egui::Vec2;
 use enigo::*;
 use tauri_hotkey::{parse_hotkey, HotkeyManager};
+
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     // let length = list.len() - 1;
@@ -31,6 +32,13 @@ fn main() {
         rec : rec,
         send : send,
     };
+    
+    // let dialog = nwg::FileDialog::default();
+    // nwg::FileDialog::builder()
+    //         .title("Hello")
+    //         .action(nwg::FileDialogAction::Open)
+    //         .multiselect(true)
+    //         .build(&dialog);
     let mut native_options = eframe::NativeOptions::default();
     native_options.initial_window_size = Some(Vec2::new(1000.0,600.0));
     eframe::run_native(Box::new(app), native_options);
