@@ -4,14 +4,15 @@ mod gameTree;
 mod tree;
 mod sokoban;
 mod AVL;
+mod TextEditor;
+mod hotkey;
 
-use graph::*;
-use LinkedList::*;
-use gameTree::getGameTree;
-use std::rc::Rc;
-use sokoban::Position;
+use std::sync::{Arc, Mutex, mpsc};
 
-use crate::{sokoban::sokoban_solve, tree::Tree};
+use TextEditor::*;
+use eframe::egui::Vec2;
+use enigo::*;
+use tauri_hotkey::{parse_hotkey, HotkeyManager};
 fn main() {
     let mut list = vec![2, 43, 3, 56, 7, 8, 9, 65, 10, 11, 12, 21];
     // let length = list.len() - 1;
@@ -20,6 +21,23 @@ fn main() {
     for i in list{
         println!("{}",i);
     }
+    collatz(56);
+    let (send,rec) = mpsc::channel();
+    let app = TextEditor::TextEditor{
+        content : String::from(""),
+        saveKey : String::from("CMDORCTRL+S"),
+        BindingKeyManager : HotkeyManager::new(),
+        rec : Arc::new(Mutex::new(rec)),
+        send : send,
+    };
+    let mut native_options = eframe::NativeOptions::default();
+    native_options.initial_window_size = Some(Vec2::new(1000.0,600.0));
+    eframe::run_native(Box::new(app), native_options);
+    
+    // let mut enigo = Enigo::new();
+    // enigo.key_down(Key::Control);
+    // enigo.key_click(Key::Layout('v'));
+    // enigo.key_up(Key::Control);
 }
 
 /// this is bubble sort
@@ -125,4 +143,17 @@ fn quick_sort(l:&mut [u32]){
     
     quick_sort(&mut ((*l)[0..=high]));
     quick_sort(&mut ((*l)[high+1..length]));
+}
+
+///Collatz conjecture
+fn collatz(i:u32){
+    if i == 1 {
+        println!("to the final 1!");
+        return;
+    }
+    if i%2==0{
+        collatz(i/2);
+    }else{
+        collatz(i*3+1);
+    }
 }
