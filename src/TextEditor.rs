@@ -7,7 +7,7 @@ pub struct TextEditor {
     pub content_copy : String,
     pub saveKey : String,
     pub BindingKeyManager : HotkeyManager,
-    pub rec : Arc<Mutex<Receiver<String>>>,
+    pub rec : Receiver<String>,
     pub send : Sender<String>
 }
 
@@ -22,10 +22,10 @@ impl epi::App for TextEditor{
     }
     fn update(&mut self, ctx: &eframe::egui::CtxRef, frame: &mut epi::Frame<'_>) {
 
-        if self.content != self.content_copy{
-            self.send.send(self.content.clone()).unwrap();
-            self.content_copy = self.content.clone();
-        }
+        match self.rec.try_recv(){
+            Ok(_) => self.save(),
+            Err(_) => println!("123")
+        };
         CentralPanel::default().show(ctx, |ui| {
             use eframe::egui::menu;
 
@@ -61,36 +61,22 @@ impl TextEditor{
     pub fn register_bindingKey(& mut self){
         let key_mng = &mut self.BindingKeyManager;
         
-        let rec_clone = Arc::clone(&self.rec);
+        let send_clone = self.send.clone();
         if let Err(err) = key_mng.register(parse_hotkey(self.saveKey.as_str()).unwrap(),  move|| {
-            loop{
-                match rec_clone.lock().unwrap().recv()  {
-                    Ok(content) => {
-                        save(&content);
-                        // std::process::exit(0);
-                        // break;
-                        },
-                    Err(_) => {
-                        println!("213");
-                        std::process::exit(0);
-                        break;
-                }
-                }
-                
-            }
-           
-            
+            send_clone.send(String::from("yes")).unwrap();
         }) {
-            panic!("{:?}", err)
+            panic!("{:?}", err);
         }
+    }
+    pub fn save(&mut self){
+        use std::fs::File;
+        let mut f = File::create("foo.txt").expect("open error");
+        f.write(self.content.as_bytes());
+        std::process::exit(0);
     }
    
 }
-fn save(content : &String){
-    use std::fs::File;
-    let mut f = File::create("foo.txt").expect("open error");
-    f.write(content.as_bytes());
-}
+
 use eframe::egui::{self, FontDefinitions, FontFamily,TextStyle};
 use std::borrow::Borrow;
 use std::collections::BTreeMap;

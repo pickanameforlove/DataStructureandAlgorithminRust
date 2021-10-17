@@ -28,7 +28,7 @@ fn main() {
         content_copy : String::from(""),
         saveKey : String::from("CMDORCTRL+S"),
         BindingKeyManager : HotkeyManager::new(),
-        rec : Arc::new(Mutex::new(rec)),
+        rec : rec,
         send : send,
     };
     let mut native_options = eframe::NativeOptions::default();
